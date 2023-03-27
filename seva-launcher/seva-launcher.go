@@ -19,7 +19,7 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
-var store_url = "https://raw.githubusercontent.com/StaticRocket/seva-apps/main"
+var store_url = "https://raw.githubusercontent.com/cshilwant/seva-apps/main"
 var addr = flag.String("addr", "0.0.0.0:8000", "http service address")
 var no_browser = flag.Bool("no-browser", false, "do not launch browser")
 var docker_browser = flag.Bool("docker-browser", false, "force use of docker browser")
@@ -94,7 +94,7 @@ func launch_docker_browser() {
 		"-e", "no_proxy",
 		"-v", xdg_runtime_dir+":/tmp",
 		"--user="+user.Uid+":"+user.Gid,
-		"ghcr.io/staticrocket/seva-browser:latest",
+		"ghcr.io/cshilwant/seva-browser:latest",
 		"http://localhost:8000/#/",
 	)
 	output_strings := strings.Split(strings.TrimSpace(string(output)), "\n")
@@ -117,7 +117,7 @@ func docker_run(args ...string) []byte {
 func start_design_gallery() {
 	log.Println("Starting local design gallery service")
 	output := docker_run("--rm", "-p", "8001:80",
-		"ghcr.io/staticrocket/seva-design-gallery:latest",
+		"ghcr.io/cshilwant/seva-design-gallery:latest",
 	)
 	output_strings := strings.Split(strings.TrimSpace(string(output)), "\n")
 	container_id_list[0] = output_strings[len(output_strings)-1]
