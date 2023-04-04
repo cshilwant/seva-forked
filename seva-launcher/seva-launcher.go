@@ -172,7 +172,7 @@ func check_env_vars() {
 
 func valid_proxy() bool {
 	_, err := url.ParseRequestURI(*http_proxy)
-	return err != nil
+	return err == nil
 }
 
 func setup_proxy() {
