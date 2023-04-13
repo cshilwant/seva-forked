@@ -19,7 +19,14 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
+//latest-tag for seva-browser
+var docker_browser_tag = "v0.1.15"
+
+// path to seva-browser.tar.gz in tisdk-default-image
+var path_to_docker_browser = "/opt/seva-browser.tar.gz"
+
 var store_url = "https://raw.githubusercontent.com/cshilwant/seva-apps/main"
+
 var addr = flag.String("addr", "0.0.0.0:8000", "http service address")
 var no_browser = flag.Bool("no-browser", false, "do not launch browser")
 var docker_browser = flag.Bool("docker-browser", false, "force use of docker browser")
@@ -35,6 +42,7 @@ var content embed.FS
 //go:embed docker-compose
 var docker_compose_bin []byte
 
+// Checks if docker compose is present in the file-system
 func is_docker_compose_installed() bool {
 	cmd := exec.Command("docker-compose", "-v")
 	_, err := cmd.CombinedOutput()
@@ -74,15 +82,64 @@ func launch_browser() {
 	} else {
 		err := open.Start("http://localhost:8000/#/")
 		if err != nil {
-			log.Println("Host browser not detected, fetching one through docker")
+			log.Println("Host browser not detected, trying to load & launch seva-browser packaged in default image")
 			go launch_docker_browser()
 		}
 	}
 }
 
+// Generates a docker image for seva-browser from tar.gz
+func generate_docker_browser(args ...string) {
+
+	cmd := exec.Command("docker load", args...)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println("seva-browser packaged in default image didn't load, fetching one through docker")
+		return
+	}
+
+	log.Printf("|\n%s\n", output)
+}
+
+// Checks if seva-browser is packaged inside tisdk-default-image
+func browser_image_present() bool {
+	_, err := os.Stat(path_to_docker_browser)
+	if os.IsNotExist(err) {
+		log.Println("seva-browser doesn't exist in default image, fetching one through docker")
+		return false
+	}
+	return true
+}
+
+// Checks if seva-browser is extracted from tar.gz to docker image
+func is_browser_loaded() bool {
+	imageName := "seva-browser"
+	cmd := exec.Command("docker", "image", "ls", "--format", "{{.Repository}}:{{.Tag}}")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+
+	images := strings.Split(string(output), "\n")
+	for _, tag := range images {
+		log.Println(tag)
+		if tag == docker_browser_tag {
+			log.Println("Found image %s\n", tag)
+			return true
+		}
+	}
+
+	log.Println("Image %s not found\n", imageName)
+	return false
+}
+
 func launch_docker_browser() {
 	xdg_runtime_dir := os.Getenv("XDG_RUNTIME_DIR")
 	user, _ := user.Current()
+
+	if browser_image_present() && !is_browser_loaded() {
+		generate_docker_browser("--input", path_to_docker_browser)
+	}
 	output := docker_run("--rm", "--privileged", "--network", "host",
 		"-v", "/tmp/.X11-unix",
 		"-e", "XAUTHORITY",
@@ -94,7 +151,7 @@ func launch_docker_browser() {
 		"-e", "no_proxy",
 		"-v", xdg_runtime_dir+":/tmp",
 		"--user="+user.Uid+":"+user.Gid,
-		"ghcr.io/cshilwant/seva-browser:latest",
+		"ghcr.io/cshilwant/seva-browser:"+docker_browser_tag,
 		"http://localhost:8000/#/",
 	)
 	output_strings := strings.Split(strings.TrimSpace(string(output)), "\n")
@@ -183,9 +240,9 @@ func setup_proxy() {
 	} else if valid_proxy() {
 		proxy_settings := ProxySettings{
 			HTTPS: *http_proxy,
-			HTTP: *http_proxy,
-			FTP: *http_proxy,
-			NO: *no_proxy,
+			HTTP:  *http_proxy,
+			FTP:   *http_proxy,
+			NO:    *no_proxy,
 		}
 		apply_proxy_settings(proxy_settings)
 	} else {
