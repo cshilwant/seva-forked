@@ -21,6 +21,7 @@ import (
 
 //latest-tag for seva-browser
 var docker_browser_tag = "v0.1.15"
+var docker_browser_path = "ghcr.io/cshilwant/seva-browser:v0.1.15"
 
 // path to seva-browser.tar.gz in tisdk-default-image
 var path_to_docker_browser = "/opt/seva-browser.tar.gz"
@@ -90,15 +91,15 @@ func launch_browser() {
 
 // Generates a docker image for seva-browser from tar.gz
 func generate_docker_browser(args ...string) {
-
-	cmd := exec.Command("docker load", args...)
+	args = append([]string{"load"}, args...)
+	cmd := exec.Command("docker", args...)
 	output, err := cmd.CombinedOutput()
+	log.Printf("|\n%s\n", output)
+
 	if err != nil {
 		log.Println("seva-browser packaged in default image didn't load, fetching one through docker")
 		return
 	}
-
-	log.Printf("|\n%s\n", output)
 }
 
 // Checks if seva-browser is packaged inside tisdk-default-image
@@ -120,10 +121,12 @@ func is_browser_loaded() bool {
 		return false
 	}
 
+	log.Println("Docker image ls output is %s\n", string(output))
+
 	images := strings.Split(string(output), "\n")
 	for _, tag := range images {
 		log.Println(tag)
-		if tag == docker_browser_tag {
+		if tag == docker_browser_path {
 			log.Println("Found image %s\n", tag)
 			return true
 		}
