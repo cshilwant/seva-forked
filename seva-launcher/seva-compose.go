@@ -16,10 +16,10 @@ import (
 )
 
 type ProxySettings struct {
-	HTTP   string `json:"http_proxy"`
-	HTTPS  string `json:"https_proxy"`
-	FTP    string `json:"ftp_proxy"`
-	NO     string `json:"no_proxy"`
+	HTTP  string `json:"http_proxy"`
+	HTTPS string `json:"https_proxy"`
+	FTP   string `json:"ftp_proxy"`
+	NO    string `json:"no_proxy"`
 }
 
 type Containers []struct {
@@ -55,10 +55,10 @@ func start_app(command WebSocketCommand) WebSocketCommand {
 
 func update_sysconfig(proxy_settings ProxySettings) {
 	format := `
-export https_proxy="%s"
-export http_proxy="%s"
-export ftp_proxy="%s"
-export no_proxy="%s"
+export HTTPS_PROXY="%s"
+export HTTP_PROXY="%s"
+export FTP_PROXY="%s"
+export NO_PROXY="%s"
 `
 	sysconfig_proxy := fmt.Sprintf(
 		format,
@@ -87,16 +87,14 @@ export no_proxy="%s"
 func update_systemd(proxy_settings ProxySettings) {
 	format := `
 [Service]
-Environment=https_proxy="%s"
-Environment=http_proxy="%s"
-Environment=ftp_proxy="%s"
-Environment=no_proxy="%s"
+Environment="HTTPS_PROXY=%s"
+Environment="HTTP_PROXY=%s"
+Environment="NO_PROXY=%s"
 `
 	systemd_proxy := fmt.Sprintf(
 		format,
 		proxy_settings.HTTPS,
 		proxy_settings.HTTP,
-		proxy_settings.FTP,
 		proxy_settings.NO,
 	)
 
@@ -140,7 +138,7 @@ func save_settings(command WebSocketCommand) WebSocketCommand {
 	}
 
 	apply_proxy_settings(proxy_settings)
-	
+
 	// TODO: Error handling if settings fail to apply
 	command.Response = append(command.Response, "0")
 	return command
@@ -159,8 +157,11 @@ func apply_proxy_settings(proxy_settings ProxySettings) {
 	os.Setenv("http_proxy", proxy_settings.HTTP)
 	os.Setenv("ftp_proxy", proxy_settings.FTP)
 	os.Setenv("no_proxy", proxy_settings.NO)
+	os.Setenv("HTTPS_PROXY", proxy_settings.HTTPS)
+	os.Setenv("HTTP_PROXY", proxy_settings.HTTP)
+	os.Setenv("FTP_PROXY", proxy_settings.FTP)
 
-	log.Println("Applied Docker Proxy Settings")
+	log.Println("Applied Docker Proxy Settings!")
 }
 
 func stop_app(command WebSocketCommand) WebSocketCommand {
