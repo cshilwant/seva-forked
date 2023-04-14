@@ -48,3 +48,4 @@ jobs:
         with:
           artifacts: "seva-web/build/seva-web.zip,seva-launcher/seva-launcher-*"
           token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
