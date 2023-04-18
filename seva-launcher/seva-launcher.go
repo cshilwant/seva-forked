@@ -264,8 +264,6 @@ func main() {
 	setup_working_directory()
 	docker_compose = prepare_compose()
 
-	go start_design_gallery()
-
 	if !*no_browser {
 		log.Println("Launching browser")
 		launch_browser()
