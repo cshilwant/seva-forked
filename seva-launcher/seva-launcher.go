@@ -34,7 +34,7 @@ var docker_browser = flag.Bool("docker-browser", false, "force use of docker bro
 var http_proxy = flag.String("http_proxy", "", "use to set http proxy")
 var no_proxy = flag.String("no_proxy", "", "use to set no-proxy")
 
-var container_id_list [2]string
+var container_id_list [1]string
 var docker_compose string
 
 //go:embed web/*
@@ -94,7 +94,6 @@ func generate_docker_browser(args ...string) {
 	args = append([]string{"load"}, args...)
 	cmd := exec.Command("docker", args...)
 	output, err := cmd.CombinedOutput()
-	log.Printf("|\n%s\n", output)
 
 	if err != nil {
 		log.Println("seva-browser packaged in default image didn't load, fetching one through docker")
@@ -114,25 +113,19 @@ func browser_image_present() bool {
 
 // Checks if seva-browser is extracted from tar.gz to docker image
 func is_browser_loaded() bool {
-	imageName := "seva-browser"
 	cmd := exec.Command("docker", "image", "ls", "--format", "{{.Repository}}:{{.Tag}}")
 	output, err := cmd.Output()
 	if err != nil {
 		return false
 	}
 
-	log.Println("Docker image ls output is %s\n", string(output))
-
 	images := strings.Split(string(output), "\n")
 	for _, tag := range images {
-		log.Println(tag)
 		if tag == docker_browser_path {
-			log.Println("Found image %s\n", tag)
 			return true
 		}
 	}
 
-	log.Println("Image %s not found\n", imageName)
 	return false
 }
 
@@ -158,7 +151,7 @@ func launch_docker_browser() {
 		"http://localhost:8000/#/",
 	)
 	output_strings := strings.Split(strings.TrimSpace(string(output)), "\n")
-	container_id_list[1] = output_strings[len(output_strings)-1]
+	container_id_list[0] = output_strings[len(output_strings)-1]
 }
 
 func docker_run(args ...string) []byte {
@@ -172,15 +165,6 @@ func docker_run(args ...string) []byte {
 		exit(1)
 	}
 	return output
-}
-
-func start_design_gallery() {
-	log.Println("Starting local design gallery service")
-	output := docker_run("--rm", "-p", "8001:80",
-		"ghcr.io/cshilwant/seva-design-gallery:latest",
-	)
-	output_strings := strings.Split(strings.TrimSpace(string(output)), "\n")
-	container_id_list[0] = output_strings[len(output_strings)-1]
 }
 
 func exit(num int) {
