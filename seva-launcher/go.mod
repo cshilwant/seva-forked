@@ -1,4 +1,4 @@
-module github.com/cshilwant/seva-launcher
+module github.com/TexasInstruments/seva-launcher
 
 go 1.19
 

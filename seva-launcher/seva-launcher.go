@@ -20,13 +20,13 @@ import (
 )
 
 //latest-tag for seva-browser
-var docker_browser_tag = "v0.1.12"
-var docker_browser_path = "ghcr.io/cshilwant/seva-browser:"+docker_browser_tag
+var docker_browser_tag = "v0.1.0"
+var docker_browser_path = "ghcr.io/texasinstruments/seva-browser:"+docker_browser_tag
 
 // path to seva-browser.tar.gz in tisdk-default-image
 var path_to_docker_browser = "/opt/seva-browser.tar.gz"
 
-var store_url = "https://raw.githubusercontent.com/cshilwant/seva-apps/main"
+var store_url = "https://raw.githubusercontent.com/TexasInstruments/seva-apps/main"
 
 var addr = flag.String("addr", "0.0.0.0:8000", "http service address")
 var no_browser = flag.Bool("no-browser", false, "do not launch browser")
@@ -147,7 +147,7 @@ func launch_docker_browser() {
 		"-e", "no_proxy",
 		"-v", xdg_runtime_dir+":/tmp",
 		"--user="+user.Uid+":"+user.Gid,
-		"ghcr.io/cshilwant/seva-browser:"+docker_browser_tag,
+		"ghcr.io/texasinstruments/seva-browser:"+docker_browser_tag,
 		"http://localhost:8000/#/",
 	)
 	output_strings := strings.Split(strings.TrimSpace(string(output)), "\n")
