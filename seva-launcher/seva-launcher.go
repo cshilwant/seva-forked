@@ -93,7 +93,7 @@ func launch_browser() {
 func generate_docker_browser(args ...string) {
 	args = append([]string{"load"}, args...)
 	cmd := exec.Command("docker", args...)
-	output, err := cmd.CombinedOutput()
+	_, err := cmd.CombinedOutput()
 
 	if err != nil {
 		log.Println("seva-browser packaged in default image didn't load, fetching one through docker")
