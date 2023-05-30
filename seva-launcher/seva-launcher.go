@@ -20,7 +20,7 @@ import (
 )
 
 //latest-tag for seva-browser
-var docker_browser_tag = "v1.0.0"
+var docker_browser_tag = "main"
 var docker_browser_path = "ghcr.io/texasinstruments/seva-browser:"+docker_browser_tag
 
 // path to seva-browser.tar.gz in tisdk-default-image
