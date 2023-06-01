@@ -21,7 +21,7 @@ import (
 
 //latest-tag for seva-browser
 var docker_browser_tag = "main"
-var docker_browser_path = "ghcr.io/texasinstruments/seva-browser:"+docker_browser_tag
+var docker_browser_path = "ghcr.io/texasinstruments/seva-browser:" + docker_browser_tag
 
 // path to seva-browser.tar.gz in tisdk-default-image
 var path_to_docker_browser = "/opt/seva-browser.tar.gz"
@@ -135,6 +135,18 @@ func launch_docker_browser() {
 
 	if browser_image_present() && !is_browser_loaded() {
 		generate_docker_browser("--input", path_to_docker_browser)
+		cmd := exec.Command("docker", "image", "tag", "ghcr.io/cshilwant/seva-browser:main", "ghcr.io/texasinstruments/seva-browser:main")
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Printf("Failed to re-tag the docker browser image : \n%s", output)
+		}
+
+		cmd_ := exec.Command("docker", "rmi", "ghcr.io/cshilwant/seva-browser:main")
+		output_, err_ := cmd_.CombinedOutput()
+		if err_ != nil {
+			log.Printf("Failed to remove the old docker browser image : \n%s", output_)
+		}
+
 	}
 	output := docker_run("--rm", "--privileged", "--network", "host",
 		"-v", "/tmp/.X11-unix",
