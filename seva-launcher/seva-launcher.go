@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 	"flag"
+	"github.com/gorilla/mux"
+	"github.com/skratchdot/open-golang/open"
 	"io/fs"
 	"io/ioutil"
 	"log"
@@ -11,17 +13,13 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"os/user"
 	"strings"
 	"syscall"
-
-	"github.com/gorilla/mux"
-	"github.com/skratchdot/open-golang/open"
 )
 
 //latest-tag for seva-browser
-var docker_browser_tag = "main"
-var docker_browser_path = "ghcr.io/cshilwant/seva-browser:"+docker_browser_tag
+var docker_browser_tag = "v1.0.0"
+var docker_browser_path = "ghcr.io/texasinstruments/seva-browser:" + docker_browser_tag
 
 // path to seva-browser.tar.gz in tisdk-default-image
 var path_to_docker_browser = "/opt/seva-browser.tar.gz"
@@ -129,25 +127,23 @@ func is_browser_loaded() bool {
 	return false
 }
 
+// Launches seva-browser
 func launch_docker_browser() {
 	xdg_runtime_dir := os.Getenv("XDG_RUNTIME_DIR")
-	user, _ := user.Current()
 
 	if browser_image_present() && !is_browser_loaded() {
 		generate_docker_browser("--input", path_to_docker_browser)
 	}
 	output := docker_run("--rm", "--privileged", "--network", "host",
-		"-v", "/tmp/.X11-unix",
-		"-e", "XAUTHORITY",
 		"-e", "XDG_RUNTIME_DIR=/tmp",
-		"-e", "DISPLAY",
+                "-e", "DISPLAY",
 		"-e", "WAYLAND_DISPLAY",
 		"-e", "https_proxy",
 		"-e", "http_proxy",
 		"-e", "no_proxy",
 		"-v", xdg_runtime_dir+":/tmp",
-		"--user="+user.Uid+":"+user.Gid,
-		"ghcr.io/cshilwant/seva-browser:"+docker_browser_tag,
+		"-u", "user",
+		"ghcr.io/texasinstruments/seva-browser:"+docker_browser_tag,
 		"http://localhost:8000/#/",
 	)
 	output_strings := strings.Split(strings.TrimSpace(string(output)), "\n")
