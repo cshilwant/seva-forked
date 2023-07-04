@@ -8,7 +8,7 @@ import 'websocket.dart';
 import 'navigation_menu.dart';
 
 // store url, must point to page with proper message listener
-final String store_url = 'https://software-dl.ti.com/processor-sdk-linux/esd/AM62X/08_06_00_42/design_gallery/index.html';
+final String store_url = 'https://software-dl.ti.com/processor-sdk-linux/esd/AM62X/seva/design_gallery/index.html';
 
 // Global key in case we want to use more snackbar messages
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
