@@ -7,8 +7,11 @@ import 'url_builder.dart';
 import 'websocket.dart';
 import 'navigation_menu.dart';
 
+// store soc name from the environment variable
+final String soc = const String.fromEnvironment("SOC");
+
 // store url, must point to page with proper message listener
-final String store_url = 'https://software-dl.ti.com/processor-sdk-linux/esd/AM62X/seva/design_gallery/index.html';
+final String store_url = 'https://software-dl.ti.com/processor-sdk-linux/esd/${soc}/seva/design_gallery/index.html';
 
 // Global key in case we want to use more snackbar messages
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
