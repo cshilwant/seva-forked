@@ -22,9 +22,9 @@ docker-compose:
 	mv docker-compose-linux-$(ARCH) docker-compose
 	chmod +x docker-compose
 
-web: $(shell find ../seva-web/build/web)
+web: $(shell find ../seva-web/build/${SOC}/web)
 	rm -rf web
-	cp -r ../seva-web/build/web/ .
+	cp -r ../seva-web/build/${SOC}/web .
 
 .PHONY: all clean run
 all: seva-launcher
@@ -32,5 +32,6 @@ clean:
 	rm -f seva-launcher
 	rm -f docker-compose
 	rm -rf web
+
 run: seva-launcher
 	./seva-launcher
