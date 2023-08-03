@@ -1,8 +1,8 @@
 # Seva
 
-Embedded platform demo tool using Flutter and Go. This service attempts to act
-as a remote head for embedded devices, allowing users to easily launch approved
-demos from a predetermined source using docker-compose.
+Seva is an Embedded platform demo tool built using Flutter and Go. The word Seva is derived from Sanskrit which means **selfless service**. 
+This service attempts to act as a remote head for embedded devices, allowing users to easily launch approved demos from a predetermined 
+source using docker-compose.
 
 ## Installation
 
