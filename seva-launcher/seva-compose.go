@@ -234,7 +234,7 @@ func is_running(command WebSocketCommand) WebSocketCommand {
 	}
 	var containers Containers
 	err = json.Unmarshal([]byte(output), &containers)
-	if err != nil {
+	if err != nil && containers != nil {
 		log.Println("Failed to parse JSON from docker-compose!")
 		exit(1)
 	}
