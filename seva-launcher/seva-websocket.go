@@ -31,7 +31,7 @@ func websocket_controller(w http.ResponseWriter, r *http.Request) {
 		_, message, err := c.ReadMessage()
 		if err != nil {
 			log.Println("read:", err)
-			break
+			exit(1)
 		}
 		log.Printf("recv: %s", message)
 
