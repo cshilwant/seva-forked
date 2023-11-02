@@ -182,11 +182,12 @@ class WebSocketStatusState extends State<WebSocketStatus> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(16),
-                      child: app_is_running
+                      child: (_selected_app.name == "No app selected")
                           ? FloatingActionButton(
-                              onPressed: stop_app,
-                              tooltip: 'Stop',
-                              child: const Icon(Icons.stop),
+                              onPressed: () {
+                              },
+                              tooltip: 'Run Disabled',
+                              child: const Icon(Icons.play_disabled_outlined),
                             )
                           : FloatingActionButton(
                               onPressed: start_app,
