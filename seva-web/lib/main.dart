@@ -107,21 +107,25 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(70),
               child: _store_connected
                   ? Tooltip(
                       message: "Store handshake has occurred successfully",
+                      height: 2.0,
                       child: const Icon(Icons.sync),
                     )
                   : Tooltip(
                       message: "Store handshake has not occurred",
+                      height: 2.0,
                       child: const Icon(Icons.sync_disabled),
                     ),
             ),
-            FloatingActionButton(
+            FloatingActionButton.extended(
               onPressed: _launch_app_browser,
               tooltip: 'Store',
-              child: const Icon(Icons.apps),
+              autofocus: true,
+              label: const Text('App Store'),
+              icon: const Icon(Icons.apps, size: 40.0),
             ),
           ],
         ));
