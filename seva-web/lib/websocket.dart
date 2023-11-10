@@ -120,9 +120,25 @@ class WebSocketStatusState extends State<WebSocketStatus> {
     return Scaffold(
       body: Center(
         child: waiting_on_response
-            ? Padding(
-                padding: EdgeInsets.all(16),
-                child: CircularProgressIndicator(),
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 200.0,
+                    child: Stack(
+                      children: <Widget>[
+                        Center(
+                          child: Container(
+                            width: 200,
+                            height: 200,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                        Center(child: const Text("Loading...")),
+                      ],
+                    ),
+                  ),
+                ],
               )
             : normal_view(context),
       ),
@@ -184,8 +200,7 @@ class WebSocketStatusState extends State<WebSocketStatus> {
                       padding: EdgeInsets.all(16),
                       child: (_selected_app.name == "No app selected")
                           ? FloatingActionButton(
-                              onPressed: () {
-                              },
+                              onPressed: () {},
                               tooltip: 'Run Disabled',
                               child: const Icon(Icons.play_disabled_outlined),
                             )
