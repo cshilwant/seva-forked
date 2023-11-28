@@ -1,0 +1,46 @@
+name: Go package
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.1'
+          channel: 'stable'
+
+      - name: Build seva-web
+        run: |
+          cd seva-web
+          make SOC=AM62X
+          make SOC=AM68
+          make SOC=AM69
+
+      - name: Build seva-launcher
+        run: |
+          cd seva-launcher
+          make ARCH=aarch64 SOC=AM62X
+          cp seva-launcher seva-launcher-am62-aarch64
+          make clean
+          make ARCH=aarch64 SOC=AM68
+          cp seva-launcher seva-launcher-am68-aarch64
+          make clean
+          make ARCH=aarch64 SOC=AM69
+          cp seva-launcher seva-launcher-am69-aarch64
+          make clean
+          make ARCH=x86_64 SOC=AM62X
+          cp seva-launcher seva-launcher-am62-x86_64
+          make clean
+
