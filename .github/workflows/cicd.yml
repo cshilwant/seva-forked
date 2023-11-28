@@ -25,6 +25,7 @@ jobs:
         run: |
           cd seva-web
           make SOC=AM62X
+          make SOC=AM62PX
           make SOC=AM68
           make SOC=AM69
 
@@ -33,6 +34,9 @@ jobs:
           cd seva-launcher
           make ARCH=aarch64 SOC=AM62X
           cp seva-launcher seva-launcher-am62-aarch64
+          make clean
+          make ARCH=aarch64 SOC=AM62PX
+          cp seva-launcher seva-launcher-am62p-aarch64
           make clean
           make ARCH=aarch64 SOC=AM68
           cp seva-launcher seva-launcher-am68-aarch64
