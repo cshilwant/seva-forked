@@ -1,8 +1,7 @@
 name: Go package
 
 on:
-  push:
-    tags: ["v*.*.*"]
+  pull_request:
     branches: [main]
 
 jobs:
@@ -45,16 +44,3 @@ jobs:
           cp seva-launcher seva-launcher-am62-x86_64
           make clean
 
-      - name: Create seva-web zip
-        uses: thedoctor0/zip-release@main
-        with:
-          type: 'zip'
-          filename: 'seva-web.zip'
-          directory: 'seva-web/build'
-
-      - name: Upload release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "seva-web/build/seva-web.zip,seva-launcher/seva-launcher-*"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          allowUpdates: true
