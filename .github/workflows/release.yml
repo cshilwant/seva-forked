@@ -2,8 +2,8 @@ name: Go package
 
 on:
   push:
-    branches: [main]
     tags: ["v*.*.*"]
+    branches: [main]
 
 jobs:
   build:
