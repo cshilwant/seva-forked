@@ -21,9 +21,7 @@ import (
 var docker_browser_tag = "v1.0.0"
 var docker_browser_path = "ghcr.io/texasinstruments/seva-browser:" + docker_browser_tag
 
-// path to seva-browser.tar.gz in tisdk-default-image
-var path_to_docker_browser = "/opt/seva-browser.tar.gz"
-
+// Link to Repository which has docker-compose file for each demo 
 var store_url = "https://raw.githubusercontent.com/TexasInstruments/seva-apps/main"
 
 var addr = flag.String("addr", "0.0.0.0:8000", "http service address")
@@ -87,53 +85,10 @@ func launch_browser() {
 	}
 }
 
-// Generates a docker image for seva-browser from tar.gz
-func generate_docker_browser(args ...string) {
-	args = append([]string{"load"}, args...)
-	cmd := exec.Command("docker", args...)
-	_, err := cmd.CombinedOutput()
-
-	if err != nil {
-		log.Println("seva-browser packaged in default image didn't load, fetching one through docker")
-		return
-	}
-}
-
-// Checks if seva-browser is packaged inside tisdk-default-image
-func browser_image_present() bool {
-	_, err := os.Stat(path_to_docker_browser)
-	if os.IsNotExist(err) {
-		log.Println("seva-browser doesn't exist in default image, fetching one through docker")
-		return false
-	}
-	return true
-}
-
-// Checks if seva-browser is extracted from tar.gz to docker image
-func is_browser_loaded() bool {
-	cmd := exec.Command("docker", "image", "ls", "--format", "{{.Repository}}:{{.Tag}}")
-	output, err := cmd.Output()
-	if err != nil {
-		return false
-	}
-
-	images := strings.Split(string(output), "\n")
-	for _, tag := range images {
-		if tag == docker_browser_path {
-			return true
-		}
-	}
-
-	return false
-}
-
 // Launches seva-browser
 func launch_docker_browser() {
 	xdg_runtime_dir := os.Getenv("XDG_RUNTIME_DIR")
 
-	if browser_image_present() && !is_browser_loaded() {
-		generate_docker_browser("--input", path_to_docker_browser)
-	}
 	output := docker_run("--rm", "--privileged", "--network", "host",
 		"-e", "XDG_RUNTIME_DIR=/tmp",
                 "-e", "DISPLAY",
