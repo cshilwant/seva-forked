@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'url_builder.dart';
 import 'websocket.dart';
 import 'navigation_menu.dart';
+import 'package:animated_background/animated_background.dart';
 
 // store soc name from the environment variable
 final String soc = const String.fromEnvironment("SOC");
@@ -44,12 +45,22 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with SingleTicketProviderStateMixin {
   final GlobalKey<WebSocketStatusState> _websocket_key = GlobalKey();
   AppMetadata _selected_app = AppMetadata.empty();
   String _message_data = '';
   bool _store_connected = false;
-
+  
+  ParticleOptions particles = const ParticleOptions(
+    spawnMaxRadius: 50,
+    spawnMinSpeed: 10.00,
+    particleCount: 68,
+    spawnMaxSpeed: 50,
+    minOpacity: 0.3,
+    spawnOpacity: 0.4,
+    baseColor: Colors.blue,
+  );
+  
   void show_warning(String message) {
     // use the scaffold key to display a message at the root of the app
     rootScaffoldMessengerKey.currentState
@@ -100,10 +111,15 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: Center(
-          child: WebSocketStatus(key: _websocket_key),
-        ),
-        floatingActionButton: Column(
+        body: AnimatedBackground(
+		vsync: this,
+		behaviour: RandomParticleBehaviour(options: particles),
+		child: Center(
+			  child: WebSocketStatus(key: _websocket_key),
+			)
+       ),
+       
+       floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Padding(
@@ -128,6 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: const Icon(Icons.apps, size: 40.0),
             ),
           ],
-        ));
+        )
+      );
   }
 }
